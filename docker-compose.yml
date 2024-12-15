@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: linkedIn
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+
+  mailService:
+    image: mailhog/mailhog:latest
+    ports:
+      - '1025:1025'
+      - '8025:8025'
