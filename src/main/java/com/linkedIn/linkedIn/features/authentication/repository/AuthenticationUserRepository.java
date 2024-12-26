@@ -1,6 +1,6 @@
-package com.linkedIn.linkedIn.features.authorisation.repository;
+package com.linkedIn.linkedIn.features.authentication.repository;
 
-import com.linkedIn.linkedIn.features.authorisation.model.AuthenticationUser;
+import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

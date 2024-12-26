@@ -1,8 +1,8 @@
-package com.linkedIn.linkedIn.features.authorisation.dto;
+package com.linkedIn.linkedIn.features.authentication.dto;
 
 public class AuthenticationUserResponseBody {
-    private String token;
-    private String message;
+    private final String token;
+    private final String message;
 
     public AuthenticationUserResponseBody(String token, String message) {
         this.token = token;

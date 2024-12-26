@@ -1,16 +1,17 @@
-package com.linkedIn.linkedIn.features.authorisation.controller;
+package com.linkedIn.linkedIn.features.authentication.controller;
 
-import com.linkedIn.linkedIn.features.authorisation.dto.AuthenticationUserRequestBody;
-import com.linkedIn.linkedIn.features.authorisation.dto.AuthenticationUserResponseBody;
-import com.linkedIn.linkedIn.features.authorisation.dto.PasswordResetRequestBody;
-import com.linkedIn.linkedIn.features.authorisation.model.AuthenticationUser;
-import com.linkedIn.linkedIn.features.authorisation.service.AuthenticationUserService;
+import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserRequestBody;
+import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserResponseBody;
+import com.linkedIn.linkedIn.features.authentication.dto.PasswordResetRequestBody;
+import com.linkedIn.linkedIn.features.authentication.dto.UserProfileUpdateRequest;
+import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
+import com.linkedIn.linkedIn.features.authentication.service.AuthenticationUserService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -25,7 +26,7 @@ public class AuthenticationUserController {
     private AuthenticationUserService authenticationUserService;
 
     @GetMapping("/user")
-    public AuthenticationUser getUser(@RequestAttribute("user") AuthenticationUser authenticationUser) {
+    public AuthenticationUser getUser(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
         return authenticationUserService.findByEmail(authenticationUser.getEmail());
     }
 
@@ -61,5 +62,16 @@ public class AuthenticationUserController {
     public String resetPassword(@RequestBody PasswordResetRequestBody passwordResetRequestBody) {
         authenticationUserService.resetPassword(passwordResetRequestBody.getToken(), passwordResetRequestBody.getEmail(), passwordResetRequestBody.getNewPassword());
         return "Password reset successfully";
+    }
+
+    @PutMapping("/profile/{id}")
+    public AuthenticationUser updateProfile(@PathVariable Long id, @RequestBody UserProfileUpdateRequest profileUpdateRequest) {
+        return authenticationUserService.updateProfile(id, profileUpdateRequest);
+    }
+
+    @DeleteMapping("/profile/{id}")
+    public String deleteProfile(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
+        authenticationUserService.delete(authenticationUser.getId());
+        return "User deleted successfully";
     }
 }

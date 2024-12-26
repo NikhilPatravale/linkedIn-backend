@@ -1,8 +1,8 @@
-package com.linkedIn.linkedIn.features.authorisation.filter;
+package com.linkedIn.linkedIn.features.authentication.filter;
 
-import com.linkedIn.linkedIn.features.authorisation.model.AuthenticationUser;
-import com.linkedIn.linkedIn.features.authorisation.service.AuthenticationUserService;
-import com.linkedIn.linkedIn.features.authorisation.utils.JsonWebToken;
+import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
+import com.linkedIn.linkedIn.features.authentication.service.AuthenticationUserService;
+import com.linkedIn.linkedIn.features.authentication.utils.JsonWebToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
@@ -34,6 +34,7 @@ public class AuthenticationFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);

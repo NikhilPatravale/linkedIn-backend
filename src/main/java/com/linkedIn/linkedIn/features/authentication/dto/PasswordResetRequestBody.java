@@ -1,4 +1,4 @@
-package com.linkedIn.linkedIn.features.authorisation.dto;
+package com.linkedIn.linkedIn.features.authentication.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package com.linkedIn.linkedIn.features.authorisation.utils;
+package com.linkedIn.linkedIn.features.authentication.utils;
 
 import org.springframework.stereotype.Component;
 

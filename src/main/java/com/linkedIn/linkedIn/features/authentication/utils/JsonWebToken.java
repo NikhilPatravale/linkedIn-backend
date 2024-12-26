@@ -1,4 +1,4 @@
-package com.linkedIn.linkedIn.features.authorisation.utils;
+package com.linkedIn.linkedIn.features.authentication.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

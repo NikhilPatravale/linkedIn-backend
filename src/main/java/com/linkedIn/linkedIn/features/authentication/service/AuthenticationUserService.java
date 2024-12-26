@@ -1,39 +1,46 @@
-package com.linkedIn.linkedIn.features.authorisation.service;
+package com.linkedIn.linkedIn.features.authentication.service;
 
-import com.linkedIn.linkedIn.features.authorisation.utils.EmailService;
-import com.linkedIn.linkedIn.features.authorisation.utils.Encoder;
-import com.linkedIn.linkedIn.features.authorisation.dto.AuthenticationUserRequestBody;
-import com.linkedIn.linkedIn.features.authorisation.dto.AuthenticationUserResponseBody;
-import com.linkedIn.linkedIn.features.authorisation.model.AuthenticationUser;
-import com.linkedIn.linkedIn.features.authorisation.repository.AuthenticationUserRepository;
-import com.linkedIn.linkedIn.features.authorisation.utils.JsonWebToken;
+import com.linkedIn.linkedIn.features.authentication.dto.UserProfileUpdateRequest;
+import com.linkedIn.linkedIn.features.authentication.utils.EmailService;
+import com.linkedIn.linkedIn.features.authentication.utils.Encoder;
+import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserRequestBody;
+import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserResponseBody;
+import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
+import com.linkedIn.linkedIn.features.authentication.repository.AuthenticationUserRepository;
+import com.linkedIn.linkedIn.features.authentication.utils.JsonWebToken;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class AuthenticationUserService {
 
-    @Autowired
-    private Encoder encoder;
+    private final Encoder encoder;
 
-    @Autowired
-    private JsonWebToken jsonWebToken;
+    private final JsonWebToken jsonWebToken;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    private AuthenticationUserRepository authenticationUserRepository;
+    private final AuthenticationUserRepository authenticationUserRepository;
+
+    private final EntityManager entityManager;
+
+    AuthenticationUserService(Encoder encoder, JsonWebToken jsonWebToken, EmailService emailService, AuthenticationUserRepository authenticationUserRepository, EntityManager entityManager) {
+        this.encoder = encoder;
+        this.jsonWebToken = jsonWebToken;
+        this.emailService = emailService;
+        this.authenticationUserRepository = authenticationUserRepository;
+        this.entityManager = entityManager;
+    }
 
     public static final Logger logger = LoggerFactory.getLogger(AuthenticationUserService.class);
     private final int tokenExpiryDurationInMinutes = 1;
@@ -151,6 +158,8 @@ public class AuthenticationUserService {
             if (isTokenMatching && !isTokenExpired) {
                 String hashedPassword = encoder.encode(newPassword);
                 user.get().setPassword(hashedPassword);
+                user.get().setPasswordResetToken(null);
+                user.get().setPasswordResetTokenExpiry(null);
                 authenticationUserRepository.save(user.get());
             } else if (isTokenMatching){
                 throw new IllegalArgumentException("Password reset token expired");
@@ -159,6 +168,29 @@ public class AuthenticationUserService {
             }
         } else {
             throw new IllegalArgumentException("Password reset failed");
+        }
+    }
+
+    public AuthenticationUser updateProfile(Long id, UserProfileUpdateRequest profileUpdateRequest) {
+        AuthenticationUser user = authenticationUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(null != profileUpdateRequest.getFirstName()) user.setFirstName(profileUpdateRequest.getFirstName());
+        if(null != profileUpdateRequest.getLastName()) user.setLastName(profileUpdateRequest.getLastName());
+        if(null != profileUpdateRequest.getCompany()) user.setCompany(profileUpdateRequest.getCompany());
+        if(null != profileUpdateRequest.getPosition()) user.setPosition(profileUpdateRequest.getPosition());
+        if(null != profileUpdateRequest.getLocation()) user.setLocation(profileUpdateRequest.getLocation());
+        return authenticationUserRepository.save(user);
+    }
+
+    @Transactional
+    public void delete(Long userId) {
+        AuthenticationUser user = entityManager.find(AuthenticationUser.class, userId);
+        if (null != user) {
+            entityManager.createNativeQuery("DELETE FROM posts_likes WHERE author_id=:userId")
+                    .setParameter("userId", userId)
+                    .executeUpdate();
+            authenticationUserRepository.deleteById(userId);
+        } else {
+            throw new IllegalArgumentException("Post not found");
         }
     }
 }
