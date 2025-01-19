@@ -1,10 +1,10 @@
 package com.linkedIn.linkedIn.features.feed.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +26,7 @@ public class Post {
     @JoinColumn(name = "author_id", nullable = false)
     private AuthenticationUser author;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "posts_likes",
@@ -34,6 +35,7 @@ public class Post {
     )
     private Set<AuthenticationUser> likes = null;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "post",
             cascade = CascadeType.ALL,

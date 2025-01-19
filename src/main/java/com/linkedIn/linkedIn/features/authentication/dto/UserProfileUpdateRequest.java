@@ -9,9 +9,18 @@ public class UserProfileUpdateRequest {
     private String company;
     private String position;
     private String location;
+    private String profilePicture;
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public void setFirstName(String firstName) {

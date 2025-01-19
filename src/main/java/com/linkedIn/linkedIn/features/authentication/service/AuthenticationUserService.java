@@ -178,6 +178,7 @@ public class AuthenticationUserService {
         if(null != profileUpdateRequest.getCompany()) user.setCompany(profileUpdateRequest.getCompany());
         if(null != profileUpdateRequest.getPosition()) user.setPosition(profileUpdateRequest.getPosition());
         if(null != profileUpdateRequest.getLocation()) user.setLocation(profileUpdateRequest.getLocation());
+        if (null != profileUpdateRequest.getProfilePicture()) user.setProfilePicture(profileUpdateRequest.getProfilePicture());
         return authenticationUserRepository.save(user);
     }
 

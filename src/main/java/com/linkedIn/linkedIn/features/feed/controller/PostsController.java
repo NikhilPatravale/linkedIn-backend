@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/feed")
@@ -70,6 +71,12 @@ public class PostsController {
     public ResponseEntity<Post> addPostLike(@RequestAttribute("authenticatedUser") AuthenticationUser user, @PathVariable Long postId) {
         Post post = postsService.addPostLike(user.getId(), postId);
         return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("/posts/{postId}/likes")
+    public ResponseEntity<Set<AuthenticationUser>> getPostLikes(@RequestAttribute("authenticatedUser") AuthenticationUser user, @PathVariable Long postId) {
+        Set<AuthenticationUser> likes = postsService.getPostLikes(user.getId(), postId);
+        return ResponseEntity.ok(likes);
     }
 
     // Endpoints for post comments

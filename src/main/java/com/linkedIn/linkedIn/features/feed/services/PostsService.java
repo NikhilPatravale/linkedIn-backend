@@ -115,4 +115,9 @@ public class PostsService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         return post.getComments();
     }
+
+    public Set<AuthenticationUser> getPostLikes(Long userId, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        return post.getLikes();
+    }
 }
