@@ -1,9 +1,6 @@
 package com.linkedIn.linkedIn.features.authentication.controller;
 
-import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserRequestBody;
-import com.linkedIn.linkedIn.features.authentication.dto.AuthenticationUserResponseBody;
-import com.linkedIn.linkedIn.features.authentication.dto.PasswordResetRequestBody;
-import com.linkedIn.linkedIn.features.authentication.dto.UserProfileUpdateRequest;
+import com.linkedIn.linkedIn.features.authentication.dto.*;
 import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
 import com.linkedIn.linkedIn.features.authentication.service.AuthenticationUserService;
 import jakarta.mail.MessagingException;
@@ -12,6 +9,7 @@ import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -41,27 +39,27 @@ public class AuthenticationUserController {
     }
 
     @PutMapping("/send-email-verification-token")
-    public String sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public ResponseEntity<GenericMessageResponseBody> sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         authenticationUserService.sendEmailVerificationToken(user.getEmail());
-        return "Email verification token sent successfully";
+        return ResponseEntity.ok(new GenericMessageResponseBody("Email verification token sent successfully"));
     }
 
     @PutMapping("/validate-email-verification-token")
-    public String validateEmailVerificationToken(@RequestParam String token, @RequestAttribute("authenticatedUser") AuthenticationUser user) {
+    public ResponseEntity<GenericMessageResponseBody> validateEmailVerificationToken(@RequestParam String token, @RequestAttribute("authenticatedUser") AuthenticationUser user) {
         authenticationUserService.validateEmailVerificationToken(token, user.getEmail());
-        return "Email verified successfully";
+        return ResponseEntity.ok(new GenericMessageResponseBody("Email verified successfully"));
     }
 
     @PutMapping("/send-password-reset-token")
-    public String  sendResetPasswordToken(@RequestParam String email) {
+    public ResponseEntity<GenericMessageResponseBody>  sendResetPasswordToken(@RequestParam String email) {
         authenticationUserService.sendPasswordResetToken(email);
-        return "Password reset token sent successfully";
+        return ResponseEntity.ok(new GenericMessageResponseBody("Password reset token sent successfully"));
     }
 
     @PutMapping("/reset-password")
-    public String resetPassword(@RequestBody PasswordResetRequestBody passwordResetRequestBody) {
+    public ResponseEntity<GenericMessageResponseBody> resetPassword(@RequestBody PasswordResetRequestBody passwordResetRequestBody) {
         authenticationUserService.resetPassword(passwordResetRequestBody.getToken(), passwordResetRequestBody.getEmail(), passwordResetRequestBody.getNewPassword());
-        return "Password reset successfully";
+        return ResponseEntity.ok(new GenericMessageResponseBody("Password reset successfully"));
     }
 
     @PutMapping("/profile/{id}")
@@ -70,8 +68,8 @@ public class AuthenticationUserController {
     }
 
     @DeleteMapping("/profile/{id}")
-    public String deleteProfile(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
+    public ResponseEntity<String> deleteProfile(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
         authenticationUserService.delete(authenticationUser.getId());
-        return "User deleted successfully";
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
