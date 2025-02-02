@@ -8,6 +8,7 @@ import com.linkedIn.linkedIn.features.feed.model.Comment;
 import com.linkedIn.linkedIn.features.feed.model.Post;
 import com.linkedIn.linkedIn.features.feed.repository.CommentRepository;
 import com.linkedIn.linkedIn.features.feed.repository.PostRepository;
+import com.linkedIn.linkedIn.features.notifications.services.NotificationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class PostsService {
     private final PostRepository postRepository;
     private final AuthenticationUserRepository authenticationUserRepository;
     private final CommentRepository commentRepository;
+    private final NotificationService notificationService;
 
-    public PostsService(PostRepository postRepository, AuthenticationUserRepository authenticationUserRepository, CommentRepository commentRepository) {
+    public PostsService(PostRepository postRepository, AuthenticationUserRepository authenticationUserRepository, CommentRepository commentRepository, NotificationService notificationService) {
         this.postRepository = postRepository;
         this.authenticationUserRepository = authenticationUserRepository;
         this.commentRepository = commentRepository;
+        this.notificationService = notificationService;
     }
 
     public Post create(PostDto postDto, Long authorId) {
@@ -80,16 +83,21 @@ public class PostsService {
             post.getLikes().remove(user);
         } else {
             post.getLikes().add(user);
+            notificationService.sendLikeNotification(user, post.getAuthor(), post.getId());
         }
-
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        notificationService.sendLikeToPost(post.getId(), post.getLikes());
+        return savedPost;
     }
 
     public Comment addComment(Long postId, Long userId, CommentDto commentDto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
         AuthenticationUser user = authenticationUserRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Comment comment = new Comment(commentDto.getContent(), user, post);
-        return commentRepository.save(comment);
+        notificationService.sendCommentNotification(user, post.getAuthor(), post.getId());
+        Comment savedComment = commentRepository.save(comment);
+        notificationService.sendCommentToPost(post.getId(), savedComment);
+        return savedComment;
     }
 
     public Comment updateComment(Long commentId, Long userId, CommentDto commentDto) {
