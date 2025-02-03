@@ -47,7 +47,7 @@ public class NotificationService {
             return;
         }
 
-        Notification notification = new Notification(author, recipient, NotificationType.LIKE, resourceId);
+        Notification notification = notificationRepository.save(new Notification(author, recipient, NotificationType.LIKE, resourceId));
         messagingTemplate.convertAndSend("/notifications/user/" + recipient.getId() + "/notification", notification);
     }
 
@@ -59,7 +59,7 @@ public class NotificationService {
         if (author.getId().equals(recipient.getId())) {
             return;
         }
-        Notification notification = new Notification(author, recipient, NotificationType.Comment, resourceId);
+        Notification notification = notificationRepository.save(new Notification(author, recipient, NotificationType.Comment, resourceId));
         messagingTemplate.convertAndSend("/notifications/user/" + recipient.getId() + "/notification", notification);
     }
 

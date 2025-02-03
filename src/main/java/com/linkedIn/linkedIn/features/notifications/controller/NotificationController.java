@@ -19,13 +19,13 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Notification>> getAllNotifications(@RequestAttribute AuthenticationUser user) {
+    public ResponseEntity<List<Notification>> getAllNotifications(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         List<Notification> notifications = notificationService.getAllNotifications(user.getId());
         return ResponseEntity.ok(notifications);
     }
 
     @PutMapping("/{notificationId}")
-    public ResponseEntity<Void> markNotificationRead(@RequestAttribute AuthenticationUser user, @PathVariable Long notificationId) {
+    public ResponseEntity<Void> markNotificationRead(@RequestAttribute("authenticatedUser") AuthenticationUser user, @PathVariable Long notificationId) {
         notificationService.markNotificationRead(user.getId(), notificationId);
         return ResponseEntity.noContent().build();
     }

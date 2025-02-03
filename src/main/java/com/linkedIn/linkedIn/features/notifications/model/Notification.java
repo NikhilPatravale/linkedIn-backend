@@ -5,6 +5,8 @@ import com.linkedIn.linkedIn.features.notifications.dto.NotificationType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Notification {
     @Id
@@ -22,7 +24,9 @@ public class Notification {
     public Long resourceId;
 
     @CreationTimestamp
-    public String creationDateTime;
+    public LocalDateTime creationDateTime;
+
+    public Notification() {}
 
     public Notification(AuthenticationUser actor, AuthenticationUser recipient, NotificationType notificationType, Long resourceId) {
         this.actor = actor;
@@ -69,5 +73,13 @@ public class Notification {
 
     public void setResourceId(Long resourceId) {
         this.resourceId = resourceId;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
     }
 }
