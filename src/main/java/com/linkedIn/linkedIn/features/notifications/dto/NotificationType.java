@@ -4,5 +4,5 @@ import com.linkedIn.linkedIn.features.feed.model.Comment;
 
 public enum NotificationType {
     LIKE,
-    Comment
+    COMMENT
 }
