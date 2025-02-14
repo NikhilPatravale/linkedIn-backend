@@ -3,6 +3,7 @@ package com.linkedIn.linkedIn.features.notifications.services;
 import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
 import com.linkedIn.linkedIn.features.authentication.repository.AuthenticationUserRepository;
 import com.linkedIn.linkedIn.features.feed.model.Comment;
+import com.linkedIn.linkedIn.features.messaging.model.Message;
 import com.linkedIn.linkedIn.features.notifications.dto.NotificationType;
 import com.linkedIn.linkedIn.features.notifications.model.Notification;
 import com.linkedIn.linkedIn.features.notifications.repository.NotificationRepository;
@@ -48,7 +49,7 @@ public class NotificationService {
         }
 
         Notification notification = notificationRepository.save(new Notification(author, recipient, NotificationType.LIKE, resourceId));
-        messagingTemplate.convertAndSend("/topic/notifications/user/" + recipient.getId() + "/notification", notification);
+        messagingTemplate.convertAndSend("/topic/notifications/users/" + recipient.getId() + "/notification", notification);
     }
 
     public void sendLikeToPost(Long postId, Set<AuthenticationUser> likes) {
@@ -60,10 +61,19 @@ public class NotificationService {
             return;
         }
         Notification notification = notificationRepository.save(new Notification(author, recipient, NotificationType.COMMENT, resourceId));
-        messagingTemplate.convertAndSend("/topic/notifications/user/" + recipient.getId() + "/notification", notification);
+        messagingTemplate.convertAndSend("/topic/notifications/users/" + recipient.getId() + "/notification", notification);
     }
 
     public void sendCommentToPost(Long postId, Comment comment) {
         messagingTemplate.convertAndSend("/topic/notifications/post/" + postId + "/comment", comment);
+    }
+
+    public void sendMessageToAuthorAndRecipient(Long authorId, Long recipientId, Message message) {
+        messagingTemplate.convertAndSend("/topic/notifications/users/" + authorId + "/message", message);
+        messagingTemplate.convertAndSend("/topic/notifications/users/" + recipientId + "/message", message);
+    }
+
+    public void sendMessageToConversation(Long conversationId, Message message) {
+        messagingTemplate.convertAndSend("/topic/notifications/conversations/" + conversationId + "/message", message);
     }
 }

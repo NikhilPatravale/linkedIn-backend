@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -193,5 +194,14 @@ public class AuthenticationUserService {
         } else {
             throw new IllegalArgumentException("Post not found");
         }
+    }
+
+    public List<AuthenticationUser> getAllUsersExceptAuthenticated(Long userId) {
+        AuthenticationUser user = authenticationUserRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return authenticationUserRepository.findAllByIdNot(user.getId());
+    }
+
+    public AuthenticationUser getUserById(Long userId) {
+        return authenticationUserRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }
