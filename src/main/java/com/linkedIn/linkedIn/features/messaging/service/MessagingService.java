@@ -74,7 +74,7 @@ public class MessagingService {
         Message message = new Message(sender, receiver, conversation, content);
         messageRepository.save(message);
         conversation.getMessages().add(message);
-        notificationService.sendMessageToConversation(conversation.getId(), message);
+        notificationService.sendMessageToConversation(conversation.getId(), conversation);
         notificationService.sendMessageToAuthorAndRecipient(sender.getId(), receiver.getId(), message);
         return conversation;
     }
@@ -85,8 +85,8 @@ public class MessagingService {
         if (!message.getReceiver().getId().equals(user.getId())) {
             throw new IllegalArgumentException("User is not receiver of this message");
         }
-        message.setRead(true);
-        notificationService.sendMessageToConversation(message.getConversation().getId(), messageRepository.save(message));
+        message.setIsRead(true);
+        notificationService.sendMessageToConversation(message.getConversation().getId(), messageRepository.save(message).getConversation());
         return null;
     }
 }

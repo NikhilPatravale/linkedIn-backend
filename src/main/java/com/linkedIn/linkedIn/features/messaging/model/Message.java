@@ -41,6 +41,10 @@ public class Message {
         this.content = content;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public AuthenticationUser getSender() {
         return sender;
     }
@@ -81,11 +85,11 @@ public class Message {
         this.conversation = conversation;
     }
 
-    public boolean isRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 }

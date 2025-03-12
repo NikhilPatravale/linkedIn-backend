@@ -3,6 +3,7 @@ package com.linkedIn.linkedIn.features.notifications.services;
 import com.linkedIn.linkedIn.features.authentication.model.AuthenticationUser;
 import com.linkedIn.linkedIn.features.authentication.repository.AuthenticationUserRepository;
 import com.linkedIn.linkedIn.features.feed.model.Comment;
+import com.linkedIn.linkedIn.features.messaging.model.Conversation;
 import com.linkedIn.linkedIn.features.messaging.model.Message;
 import com.linkedIn.linkedIn.features.notifications.dto.NotificationType;
 import com.linkedIn.linkedIn.features.notifications.model.Notification;
@@ -73,7 +74,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/notifications/users/" + recipientId + "/message", message);
     }
 
-    public void sendMessageToConversation(Long conversationId, Message message) {
-        messagingTemplate.convertAndSend("/topic/notifications/conversations/" + conversationId + "/message", message);
+    public void sendMessageToConversation(Long conversationId, Conversation conversation) {
+        messagingTemplate.convertAndSend("/topic/notifications/conversations/" + conversationId + "/message", conversation);
     }
 }
